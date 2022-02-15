@@ -1,0 +1,31 @@
+#!/bin/bash
+#PBS -P q95
+#PBS -q normalbw
+#PBS -l walltime=96:00:00
+#PBS -l mem=64000MB
+#PBS -l jobfs=500000MB
+#PBS -l ngpus=0
+#PBS -l ncpus=4
+#PBS -l other=mpi:hyperthread
+#PBS -l wd
+#PBS -r y
+#PBS -j oe
+
+echo "$(date -u) ||| $PBS_JOBID ||| $PWD ||| CP22.CCSD-T_6-31pGd.out ||| hugo@shiraz" >> $HOME/.recordfile 
+
+rm -rf $PBS_JOBFS/CP22
+mkdir -p $PBS_JOBFS/CP22
+module load qchem/5.0-broadwell
+
+echo 'machine   : Raijin'
+echo 'queue     : normalbw'
+echo 'jobfs     : 500000MB'
+echo 'ncpus     : 4'
+echo 'ngpus     : 0'
+
+time /apps/qchem/5.0-broadwell/bin/qchem -nt $PBS_NCPUS CP22.CCSD-T_6-31pGd.in CP22.CCSD-T_6-31pGd.out CP22.CCSD-T_6-31pGd.mo
+echo "$(date -u) ||| $PBS_JOBID ||| $PWD ||| CP22.CCSD-T_6-31pGd.out ||| hugo@shiraz" >> $HOME/.recordfile 
+
+/opt/pbs/default/bin/pbs_rusage $PBS_JOBID >> $PBS_JOBID.log
+
+
